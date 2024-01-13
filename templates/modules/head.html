@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- 公共的 head 部分，可以定义部分 links,scripts,styles -->
+<th:block th:fragment="head(htmlType)">
+
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" th:href="@{/assets/css/aurora.css}">
+    <script async="" rel="prefetch"
+            src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"
+            type="text/javascript"></script>
+    <script rel="preload" src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"
+            type="text/javascript"></script>
+    <script rel="preload" src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+            type="text/javascript"></script>
+    <link rel="stylesheet" href="https://fonts.loli.net/css?family=Rubik">
+    <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/waline/2.15.5/waline.min.css">
+    <link rel="stylesheet" th:href="@{/assets/css/breadcrumbs.css}">
+
+    <link rel="stylesheet" th:href="@{/assets/css/comment.css}">
+    <script th:src="@{/assets/js/utils.js}"></script>
+    <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- 代码块自动识别语言 -->
+    <th:block th:replace="~{modules/common/code :: code}"/>
+    <!--  代码块-->
+    <th:block th:replace="~{macro/prism-code :: prism-code}"/>
+    <!-- 声明一些公共信息 -->
+    <script th:inline="javascript">
+        var GLOBAL_CONFIG = {
+            // 页面类型 index,page,post,tag,category
+            htmlType: [[${ htmlType }]],
+            postTitle: [[${ htmlType == 'post' ? post.spec.title : htmlType == 'page' ? singlePage.spec.title : ''}]],
+            isPost: [[${htmlType == 'post'}]],
+            isHome: [[${ htmlType == 'index'}]],
+            source: {
+                twikoo: {
+                    js: '/themes/theme-aurora/assets/libs/twikoo/twikoo.all.min.js',
+                }
+            },
+            prism: {
+                enable: [[${ theme.config.code.enable }]],
+                enable_title: [[${ theme.config.code.enable_title }]],
+                enable_hr: [[${ theme.config.code.enable_hr }]],
+                enable_line: [[${ theme.config.code.enable_line }]],
+                enable_copy: [[${ theme.config.code.enable_copy }]],
+                enable_expander: [[${ theme.config.code.enable_expander }]],
+                prism_limit: Number([[${#strings.isEmpty(theme.config.code.height_limit) ? 300 : theme.config.code.height_limit}]]) + 30,
+                enable_height_limit: [[${theme.config.code.enable_height_limit}]]
+            },
+            // Snackbar: {
+            //     chs_to_cht: "你已切换为繁体",
+            //     cht_to_chs: "你已切换为简体",
+            //     day_to_night: "你已切换为深色模式",
+            //     night_to_day: "你已切换为浅色模式",
+            //     bgLight: "#49b1f5",
+            //     bgDark: "#121212",
+            //     position: "top-center",
+            // },
+
+        }
+
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="/themes/theme-aurora/assets/libs/iconfont/iconfont.css">
+
+    <style>
+        *::-webkit-scrollbar-thumb {
+            background-color: #44475a;
+            background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .4) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .4) 50%, rgba(255, 255, 255, .4) 75%, transparent 75%, transparent);
+            border-radius: 2em
+        }
+
+        *::-webkit-scrollbar {
+            width: .5em;
+            height: .5em
+        }
+
+        *::-webkit-scrollbar-track {
+            background-color: transparent;
+            border-radius: 0
+        }
+    </style>
+</th:block>
+
+</html>
