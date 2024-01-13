@@ -1,12 +1,89 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" th:replace="~{modules/layout :: html(content = ~{::content})}">
-  <th:block th:fragment="content">
-    <article
-      class="prose !max-w-none p-4"
-      th:classappend="${theme.config.post.content_size} + ' ' + ${theme.config.post.content_theme}"
-    >
-      <h1 th:text="${post.spec.title}"></h1>
-      <th:block th:utext="${post.content.content}"> </th:block>
-    </article>
-  </th:block>
+<html xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{layout :: html(htmlType = 'post',content = ~{::content},title = ${post.spec.title + ' | ' + site.title})}">
+<th:block th:fragment="content">
+    <th:block th:replace="~{macro/app-banner :: app-banner(img=${post.spec.cover})}"/>
+    <div class="relative z-10">
+        <div class="flex flex-col mt-20" slug="aurora/custom-quotes">
+            <div class="main-grid">
+                <div class="post-header">
+                    <span class="post-labels" style="z-index: 999">
+                        <b th:each="category : ${post.categories}">
+                            <span style="font-weight: bold;font-size: larger"
+                                  th:text="${category.spec.displayName}"></span>
+                        </b>
+                        <ul>
+                            <li th:each="tag : ${post.tags}">
+                                <em class="opacity-50">#</em> [[${tag.spec.displayName}]]</li>
+                        </ul>
+                    </span>
+                    <h1 class="post-title text-white" th:text="${post.spec.title}"></h1>
+                    <div class="flex flex-row items-center justify-start mt-8 mb-4">
+                        <div class="post-footer">
+                            <img class="hover:opacity-50 cursor-pointer"
+                                 alt="author avatar" lazy="error"
+                                 th:src="@{${#strings.isEmpty(site.logo) ? ASSETS + '/img/ObsidianestLogo.png' : site.logo}}">
+                            <span class="text-white opacity-80">
+                                <strong class="text-white pr-1.5 hover:opacity-50 cursor-pointer"
+                                        th:text="${post.spec.owner}"></strong>
+                                <span class="opacity-70">发布于 [[${#dates.format(post.spec.publishTime, 'MMMM dd,yyyy')}]]</span>
+                            </span>
+                        </div>
+                        <th:block th:replace="~{macro/post-stats :: post-stats(${post})}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="main-grid">
+                <div>
+                    <article id="article-container" th:class="'post-html  post-content  ' + ${ theme.config.code.enable_line || pluginFinder.available('PluginPrismJS') ? 'line-numbers' : ''}"
+                             th:utext="${post.content.content}"></article>
+
+                    <div class="flex flex-col lg:flex-row justify-start items-end my-8"
+                         th:with="postCursor = ${postFinder.cursor(post.metadata.name)}">
+                        <div th:if="${postCursor.hasPrevious()}"
+                             class="w-full h-full self-stretch mr-0 lg:mr-4">
+                            <p class="relative flex items-center pb-2 mb-4 text-xl text-ob-bright uppercase">
+                                <svg class="svg-icon inline-block mr-2 inline-block mr-2"
+                                     style="height: 1em; width: 1em;">
+                                    <use href="#icon-arrow-left-circle" fill="currentColor"
+                                         stroke="var(--background-primary)"></use>
+                                </svg>
+                                <span class="w-full block">上一篇更回味</span>
+                                <span class="absolute bottom-0 h-1 w-14 rounded-full"
+                                      style="background: linear-gradient(130deg, rgb(36, 198, 220), rgb(84, 51, 255) 41.07%, rgb(255, 0, 153) 76.05%);"></span>
+                            </p>
+                            <th:block
+                                    th:replace="~{macro/post-card :: post-card(${post.spec.pinned},${postCursor.previous})}"/>
+                        </div>
+                        <div th:if="${postCursor.hasNext()}"
+                             class="w-full h-full self-stretch mt-8 lg:mt-0">
+                            <p class="relative flex items-center pb-2 mb-4 text-xl text-ob-bright uppercase">
+                                <span class="w-full block text-right">下一篇更精彩</span>
+                                <svg class="svg-icon inline-block ml-2 inline-block ml-2"
+                                     style="height: 1em; width: 1em;">
+                                    <use href="#icon-arrow-right-circle" fill="currentColor"
+                                         stroke="var(--background-primary)"></use>
+                                </svg>
+                                <span class="absolute bottom-0 h-1 w-14 rounded-full right-0"
+                                      style="background: linear-gradient(130deg, rgb(36, 198, 220), rgb(84, 51, 255) 41.07%, rgb(255, 0, 153) 76.05%);"></span>
+                            </p>
+                            <th:block
+                                    th:replace="~{macro/post-card :: post-card(${post.spec.pinned},${postCursor.next})}"/>
+                        </div>
+                    </div>
+
+                    <!--/* 评论组件 */-->
+                    <th:block th:replace="~{modules/comment :: comment(group = 'content.halo.run',
+                    kind = 'Post',
+                    name = ${post.metadata.name},
+                    allowComment = ${post.spec.allowComment})}"/>
+                </div>
+
+                <div th:replace="~{modules/aside :: aside(${theme.config.sidebar.widgets.postWidgets})}"></div>
+            </div>
+        </div>
+    </div>
+</th:block>
 </html>
+
+
